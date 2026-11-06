@@ -15,9 +15,9 @@ TikDrop adalah proyek lokal berbasis HTML/CSS/JavaScript dan Python FastAPI. Fro
 2. Pastikan Python terpasang dan bisa dipanggil dari terminal (`python --version`).
 3. Jalankan `setup.bat` satu kali. Script ini membuat virtual environment dan memasang dependensi.
 4. Pasang FFmpeg. TikDrop akan mencoba menemukan FFmpeg WinGet Gyan secara otomatis meskipun PATH terminal lama belum diperbarui.
-5. Atur `TIKDROP_ACCESS_PASSWORD` di `.env` seperti bagian **Password akses** di bawah. Server menolak startup tanpa password.
+5. (Opsional) Salin `.env.example` menjadi `.env` untuk menyesuaikan batas penggunaan. TikDrop tidak memerlukan password atau akun.
 6. Tutup server TikDrop yang sedang berjalan (`CTRL+C`), lalu jalankan `run.bat` dari terminal baru.
-7. Buka `http://127.0.0.1:8000`, lalu masuk dengan password tersebut. `/api/health` juga memerlukan sesi login.
+7. Buka `http://127.0.0.1:8000`; halaman utama TikDrop langsung tersedia.
 
 ## Membuka dari HP di Wi-Fi yang sama
 
@@ -28,19 +28,13 @@ TikDrop adalah proyek lokal berbasis HTML/CSS/JavaScript dan Python FastAPI. Fro
 
 `run-lan.bat` membuka server ke jaringan lokal. Jangan gunakan jaringan publik dan jangan meneruskan port ini langsung ke internet.
 
-## Password akses dan Cloudflare Quick Tunnel
+## Akses publik dan Cloudflare Quick Tunnel
 
-Seluruh halaman aplikasi, aset frontend/PWA, `/api/health`, `/api/preview`, `/api/download`, dan `/api/files/{filename}` memerlukan satu password bersama. Hanya halaman login, aset login, dan `POST /api/auth/login` yang dapat diakses sebelum autentikasi. Password tidak disimpan di source code.
+TikDrop tidak meminta akun, password, atau cookie sesi. Halaman utama, preview, download, file hasil, dan health dapat diakses langsung. Untuk membatasi penggunaan, preview dibatasi 30 permintaan per menit per IP; pembuatan download 5 permintaan per jam per IP; dan pengambilan file 30 permintaan per jam per IP secara default. Dua batas download dapat diubah dengan `TIKDROP_MAX_DOWNLOADS_PER_IP_PER_HOUR` dan `TIKDROP_MAX_FILE_SERVES_PER_IP_PER_HOUR`.
 
-1. Salin `.env.example` menjadi `.env`.
-2. Buat password acak dengan `python -c "import secrets; print(secrets.token_urlsafe(32))"`.
-3. Isi nilai tersebut pada `.env` sebagai `TIKDROP_ACCESS_PASSWORD=...`. TikDrop menolak startup jika password belum diisi atau panjangnya kurang dari 16 karakter.
-4. Jalankan `run.bat` dan pastikan login lokal berfungsi.
-5. Untuk uji Quick Tunnel, jalankan `cloudflared tunnel --url http://localhost:8000`, lalu buka URL HTTPS `trycloudflare.com` yang dicetak `cloudflared` dan masukkan password TikDrop.
+Penghitung rate limit berada di memori proses, jadi restart mengosongkan jendela limit dan deployment multi-worker perlu rate limiter bersama di proxy atau Redis. TikDrop mengambil alamat client dari peer koneksi dan hanya memakai `CF-Connecting-IP` saat koneksi proxy lokal; jangan membuka origin di belakang proxy yang tidak dipercaya.
 
-Cookie sesi ditandatangani, `HttpOnly`, `SameSite=Strict`, dan kedaluwarsa setelah delapan jam. Password yang diganti membatalkan sesi lama. Login dibatasi maksimal delapan percobaan per lima menit pada alamat peer yang terlihat oleh aplikasi. Logout menghapus cache shell PWA pada browser tersebut.
-
-Quick Tunnel ditujukan untuk pengembangan dan pengujian, bukan hosting produksi. Siapa pun yang mendapatkan URL tunnel dapat mencapai halaman login; jangan membagikan password, dan hentikan tunnel setelah pengujian. Untuk publikasi jangka panjang gunakan tunnel terkelola serta lapisan akses dan pemantauan yang sesuai. [Cloudflare Quick Tunnels](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/) menjelaskan batas dan penggunaannya.
+Untuk uji Quick Tunnel, jalankan `cloudflared tunnel --url http://localhost:8000`, lalu buka URL HTTPS `trycloudflare.com` yang dicetak `cloudflared`. Siapa pun yang memiliki URL publik dapat menggunakan server, dan download memakai resource mesin yang menjalankannya. Quick Tunnel ditujukan untuk pengembangan dan pengujian, bukan hosting produksi; [Cloudflare Quick Tunnels](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/) menjelaskan batasnya.
 
 ## Install TikDrop sebagai PWA
 
@@ -48,13 +42,13 @@ TikDrop menyediakan manifest dan service worker untuk memasang aplikasi serta me
 
 - **Android:** buka TikDrop lewat HTTPS di Chrome atau browser berbasis Chromium, lalu gunakan tombol Install TikDrop jika tersedia atau menu browser **Install app / Add to Home screen**.
 - **iPhone/iPad:** buka TikDrop lewat HTTPS di Safari, ketuk **Bagikan**, pilih **Tambahkan ke Layar Utama**, lalu ketuk Tambahkan. Tombol petunjuk TikDrop menampilkan langkah tersebut.
-- **HTTPS:** login dari jaringan lain hanya diizinkan lewat HTTPS; `localhost` loopback tetap diizinkan untuk pengembangan lokal. Alamat LAN HTTP tidak dapat digunakan untuk login. Service worker dan prompt instalasi juga memerlukan secure context; gunakan HTTPS dengan sertifikat tepercaya atau Quick Tunnel.
+- **HTTPS:** service worker dan prompt instalasi memerlukan secure context; gunakan HTTPS dengan sertifikat tepercaya atau Quick Tunnel.
 - Host server dapat diatur lewat `TIKDROP_HOST` dan port lewat `TIKDROP_PORT`. `run.bat` memakai `127.0.0.1`; `run-lan.bat` memakai `0.0.0.0` secara default. Untuk mengubahnya dari Command Prompt, jalankan `set TIKDROP_HOST=0.0.0.0` dan `set TIKDROP_PORT=8000`, lalu mulai `run-lan.bat`.
 - Service worker hanya menyimpan shell frontend dan ikon lokal. Request API, URL thumbnail TikTok, serta file MP4/MP3 tidak disimpan di cache.
 
 ## API
 
-Semua route aplikasi selain halaman/aset login dan `POST /api/auth/login` memerlukan cookie sesi yang dibuat setelah password benar. Request API tanpa sesi mendapat HTTP 401; halaman browser diarahkan ke `/login`. `GET /api/health` juga dilindungi.
+Endpoint API dan file hasil tidak memerlukan login. Dokumentasi interaktif FastAPI dan skema OpenAPI dinonaktifkan.
 
 ### `GET /api/health`
 
@@ -96,6 +90,8 @@ Salin `.env.example` menjadi `.env`, lalu atur:
 - `TIKDROP_MAX_DURATION_SECONDS` — batas durasi video (default 600 detik; MP3 tidak dibatasi pengaturan ini)
 - `TIKDROP_FILE_TTL_HOURS` — umur file hasil (default 6 jam)
 - `TIKDROP_MAX_CONCURRENT_DOWNLOADS` — jumlah download bersamaan (default 2)
+- `TIKDROP_MAX_DOWNLOADS_PER_IP_PER_HOUR` — jumlah permintaan download per IP per jam (default 5)
+- `TIKDROP_MAX_FILE_SERVES_PER_IP_PER_HOUR` — jumlah pengambilan file per IP per jam (default 30)
 - `TIKDROP_SOCKET_TIMEOUT` — timeout koneksi (default 30 detik)
 
 ## Catatan kompatibilitas dan batasan
@@ -105,7 +101,7 @@ Salin `.env.example` menjadi `.env`, lalu atur:
 - TikDrop tidak dapat menjamin video tanpa watermark. Hasil bergantung pada format yang secara sah disediakan dan dapat diakses dari sumber.
 - Video privat, video yang memerlukan login, atau konten yang aksesnya dibatasi tidak didukung. Jangan gunakan untuk mengunduh atau menyebarkan konten tanpa izin pemiliknya.
 - Audio MP3, penggabungan/remux video, dan penyesuaian resolusi memerlukan FFmpeg. TikDrop mencoba mendeteksi instalasi Gyan FFmpeg dari WinGet secara otomatis saat backend dimulai.
-- TikDrop memakai satu password bersama, bukan akun per pengguna, MFA, atau kontrol akses per orang. Lapisan ini membantu mencegah akses kasual melalui tunnel, tetapi bukan pengganti kebijakan Zero Trust dan hardening deployment produksi.
+- Karena aplikasi bersifat publik, batas rate dan resource diterapkan per IP dan global. Jika dijalankan di belakang proxy, batasi akses origin ke proxy tepercaya agar alamat client yang dipakai limiter tidak dapat dipalsukan.
 
 ## Struktur proyek
 
@@ -115,9 +111,6 @@ tikdrop/
 │   ├── index.html
 │   ├── style.css
 │   ├── app.js
-│   ├── login.html
-│   ├── login.css
-│   ├── login.js
 │   ├── manifest.json
 │   ├── sw.js
 │   └── icons/              # Ikon PWA dan Apple Touch Icon lokal

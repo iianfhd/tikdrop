@@ -2,7 +2,7 @@ const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAl
 const urlInput = $('#videoUrl'), urlField = $('#urlField'), pasteButton = $('#pasteButton'), clearButton = $('#clearButton'),
   fieldHint = $('#fieldHint'), downloadButton = $('#downloadButton'), buttonText = $('.button-text'), message = $('#message'),
   qualityRow = $('#qualityRow'), formatHint = $('#formatHint'), qualityHint = $('#qualityHint'), themeButton = $('#themeButton'),
-  installButton = $('#installButton'), installHelp = $('#installHelp'), logoutButton = $('#logoutButton'),
+  installButton = $('#installButton'), installHelp = $('#installHelp'),
   formatButtons = $$('.format-option'), qualityButtons = $$('.quality-option'),
   vf = $('#vf'), screenEl = $('#screen'), videoThumbnail = $('#videoThumbnail'), hudTag = $('#hudTag'), hudUser = $('#hudUser'), hudMeta = $('#hudMeta'), tray = $('#tray');
 let selectedFormat = 'video', selectedQuality = 'best', state = 'idle', user = '';
@@ -119,7 +119,6 @@ function schedulePreview(value) {
       });
       const data = await response.json().catch(() => ({}));
       if (generation !== previewGeneration || urlInput.value.trim() !== value) return;
-      if (response.status === 401) { location.replace('/login'); return; }
       if (!response.ok) throw new Error(data.detail || 'Pratinjau tidak tersedia.');
       if (data.title) hudUser.textContent = data.title;
       const attribution = [data.author, Number.isFinite(data.duration) ? `${Math.round(data.duration)} dtk` : ''].filter(Boolean).join(' · ');
@@ -271,29 +270,6 @@ function reloadAfterPendingWorkerUpdate() {
   setTimeout(() => location.reload(), 1200);
 }
 
-async function clearPwaShellCache() {
-  const worker = navigator.serviceWorker?.controller;
-  if (!worker || !window.MessageChannel) return;
-  await new Promise(resolve => {
-    const channel = new MessageChannel();
-    const timeout = setTimeout(resolve, 1500);
-    channel.port1.onmessage = () => { clearTimeout(timeout); resolve(); };
-    worker.postMessage({ type: 'CLEAR_TIKDROP_CACHES' }, [channel.port2]);
-  });
-}
-logoutButton.addEventListener('click', async () => {
-  logoutButton.disabled = true;
-  try {
-    const response = await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
-    if (!response.ok && response.status !== 401) throw new Error('Logout gagal. Coba lagi.');
-    await clearPwaShellCache();
-    location.replace('/login');
-  } catch (error) {
-    logoutButton.disabled = false;
-    setMessage(error instanceof TypeError ? 'Server tidak dapat dijangkau.' : error.message, 'error');
-  }
-});
-
 /* ---------- Download ---------- */
 function setLoading(loading) {
   downloadButton.disabled = loading; downloadButton.classList.toggle('loading', loading);
@@ -318,10 +294,6 @@ downloadButton.addEventListener('click', async () => {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url, format: selectedFormat, quality: selectedFormat === 'audio' ? 'best' : selectedQuality })
     });
-    if (response.status === 401) {
-      location.replace('/login');
-      throw new Error('Sesi berakhir. Masuk kembali untuk melanjutkan.');
-    }
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.detail || data.error || `Server merespons dengan status ${response.status}.`);
     if (!data.download_url) throw new Error('Server belum mengirim file hasil download.');

@@ -9,11 +9,6 @@ from dotenv import load_dotenv
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(PROJECT_ROOT / ".env", override=False)
 
-ACCESS_PASSWORD = os.getenv("TIKDROP_ACCESS_PASSWORD", "")
-if ACCESS_PASSWORD and (not ACCESS_PASSWORD.strip() or len(ACCESS_PASSWORD) < 16):
-    raise ValueError("TIKDROP_ACCESS_PASSWORD harus berisi minimal 16 karakter non-kosong.")
-
-
 def _ensure_winget_ffmpeg_on_path() -> None:
     """Find Gyan FFmpeg installed by WinGet even when the shell PATH is stale."""
     if shutil.which("ffmpeg") and shutil.which("ffprobe"):
@@ -74,6 +69,8 @@ MAX_FILE_SIZE_MB = _env_int("TIKDROP_MAX_FILE_SIZE_MB", 500)
 MAX_DURATION_SECONDS = _duration_limit_seconds()
 FILE_TTL_HOURS = _env_int("TIKDROP_FILE_TTL_HOURS", 6)
 MAX_CONCURRENT_DOWNLOADS = _env_int("TIKDROP_MAX_CONCURRENT_DOWNLOADS", 2)
+MAX_DOWNLOADS_PER_IP_PER_HOUR = _env_int("TIKDROP_MAX_DOWNLOADS_PER_IP_PER_HOUR", 5)
+MAX_FILE_SERVES_PER_IP_PER_HOUR = _env_int("TIKDROP_MAX_FILE_SERVES_PER_IP_PER_HOUR", 30)
 DOWNLOAD_TIMEOUT_SECONDS = _env_int("TIKDROP_SOCKET_TIMEOUT", 30)
 
 DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)

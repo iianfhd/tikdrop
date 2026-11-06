@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "tikdrop-static-";
-const CACHE_NAME = `${CACHE_PREFIX}v1.6.1`;
+const CACHE_NAME = `${CACHE_PREFIX}v1.6.2`;
 const APP_SHELL = [
   "/",
   "/index.html",
@@ -28,15 +28,6 @@ self.addEventListener("activate", event => {
       .filter(name => name.startsWith(CACHE_PREFIX) && name !== CACHE_NAME)
       .map(name => caches.delete(name)));
     await self.clients.claim();
-  })());
-});
-
-self.addEventListener("message", event => {
-  if (event.data?.type !== "CLEAR_TIKDROP_CACHES") return;
-  event.waitUntil((async () => {
-    const names = await caches.keys();
-    await Promise.all(names.filter(name => name.startsWith(CACHE_PREFIX)).map(name => caches.delete(name)));
-    event.ports?.[0]?.postMessage({ok: true});
   })());
 });
 

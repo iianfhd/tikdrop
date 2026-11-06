@@ -48,9 +48,3 @@ class PreviewRequest(BaseModel):
     @classmethod
     def validate_tiktok_url(cls, value: str) -> str:
         return _validate_tiktok_url(value)
-
-
-class LoginRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    password: str = Field(min_length=1, max_length=1024)
