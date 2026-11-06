@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0d1030" />
+<meta name="color-scheme" content="dark light" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="TikDrop" />
+<link rel="manifest" href="/manifest.json" />
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+<meta name="description" content="TikDrop — simpan video TikTok sebagai MP4 atau MP3, tanpa iklan." />
+<title>TikDrop — Tempel link, simpan videonya</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d1030'/%3E%3Cpath d='M13 6h6v9h5l-8 9-8-9h5z' fill='%23ff6a3d'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..800&family=Instrument+Sans:wght@400..700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('tikdrop-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}catch(e){document.documentElement.dataset.theme='dark'}</script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#top" aria-label="TikDrop beranda">
+    <svg viewBox="0 0 25 25" aria-hidden="true"><g fill="currentColor" opacity=".16"><rect x="0" y="0" width="4" height="4"/><rect x="5" y="0" width="4" height="4"/><rect x="15" y="0" width="4" height="4"/><rect x="20" y="0" width="4" height="4"/><rect x="5" y="5" width="4" height="4"/><rect x="15" y="5" width="4" height="4"/><rect x="0" y="5" width="4" height="4"/><rect x="20" y="5" width="4" height="4"/><rect x="5" y="10" width="4" height="4"/><rect x="15" y="10" width="4" height="4"/><rect x="0" y="15" width="4" height="4"/><rect x="20" y="15" width="4" height="4"/><rect x="0" y="20" width="4" height="4"/><rect x="5" y="20" width="4" height="4"/><rect x="15" y="20" width="4" height="4"/><rect x="20" y="20" width="4" height="4"/></g><g fill="currentColor"><rect x="10" y="0" width="4" height="4"/><rect x="10" y="5" width="4" height="4"/></g><g fill="#ff6a3d"><rect x="0" y="10" width="4" height="4"/><rect x="10" y="10" width="4" height="4"/><rect x="20" y="10" width="4" height="4"/><rect x="5" y="15" width="4" height="4"/><rect x="10" y="15" width="4" height="4"/><rect x="15" y="15" width="4" height="4"/><rect x="10" y="20" width="4" height="4"/></g></svg>
+    <span>tikdrop</span>
+  </a>
+  <div class="top-actions">
+  <button class="theme install-control" id="installButton" type="button" aria-label="Install TikDrop" title="Install TikDrop" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 8v8m-4-4h8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+  </button>
+  <button class="theme" id="logoutButton" type="button" aria-label="Keluar dari TikDrop" title="Keluar">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5v16h5M14 8l4 4-4 4m4-4H9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button class="theme" id="themeButton" type="button" aria-label="Ganti tema" title="Ganti tema">
+    <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.7"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4"/></svg>
+    <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 15.3A8.6 8.6 0 0 1 8.7 3.6 8.7 8.7 0 1 0 20.4 15.3Z"/></svg>
+  </button>
+  </div>
+</header>
+
+<dialog class="install-help" id="installHelp" aria-labelledby="installHelpTitle">
+  <form method="dialog">
+    <h2 id="installHelpTitle">Tambahkan TikDrop ke Home Screen</h2>
+    <p>Di Safari, ketuk tombol Bagikan, pilih <strong>Tambahkan ke Layar Utama</strong>, lalu ketuk Tambahkan.</p>
+    <button class="go" type="submit">Mengerti</button>
+  </form>
+</dialog>
+
+<main class="hero" id="top">
+  <div class="lead">
+    <h1 id="pageTitle"><span class="ln"><span>Tempel link,</span></span><span class="ln"><span>simpan videonya.</span></span></h1>
+    <p>Pilih MP4 atau MP3, atur kualitasnya, lalu unduh. Tanpa iklan.</p>
+  </div>
+
+  <div class="panel" id="downloader">
+    <label class="lbl" for="videoUrl">Link video TikTok</label>
+    <div class="url" id="urlField">
+      <svg class="lead-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13.5a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1.7 1.7M14 10.5a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1.7-1.7"/></svg>
+      <input id="videoUrl" type="url" inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false" placeholder="https://www.tiktok.com/@..." />
+      <button class="clear" id="clearButton" type="button" aria-label="Hapus tautan">×</button>
+      <button class="paste" id="pasteButton" type="button" aria-label="Tempel link dari clipboard">Tempel</button>
+    </div>
+    <p class="hint" id="fieldHint">Tempel tautan video TikTok yang ingin kamu simpan.</p>
+
+    <div class="row"><span class="lbl">Format</span><span class="sub" id="formatHint">Video MP4</span></div>
+    <div class="seg" id="formatSeg" style="--n:2;--i:0" role="group" aria-label="Pilih format download">
+      <span class="thumb" aria-hidden="true"></span>
+      <button class="format-option" data-format="video" type="button" aria-pressed="true"><strong>Video</strong><small>MP4</small></button>
+      <button class="format-option" data-format="audio" type="button" aria-pressed="false"><strong>Audio</strong><small>MP3</small></button>
+    </div>
+
+    <div class="collapse" id="qualityRow">
+      <div>
+        <div class="row"><span class="lbl">Kualitas</span><span class="sub" id="qualityHint">Otomatis memilih yang tertinggi</span></div>
+        <div class="seg" id="qualitySeg" style="--n:4;--i:0" role="group" aria-label="Pilih kualitas video">
+          <span class="thumb" aria-hidden="true"></span>
+          <button class="quality-option" data-quality="best" type="button" aria-pressed="true"><strong>Auto</strong><small>Terbaik</small></button>
+          <button class="quality-option" data-quality="1080" type="button" aria-pressed="false"><strong>1080p</strong><small>Maks. Full HD</small></button>
+          <button class="quality-option" data-quality="720" type="button" aria-pressed="false"><strong>720p</strong><small>Maks. HD</small></button>
+          <button class="quality-option" data-quality="480" type="button" aria-pressed="false"><strong>480p</strong><small>Maks. SD</small></button>
+        </div>
+      </div>
+    </div>
+
+    <button class="go" id="downloadButton" type="button">
+      <svg class="dl" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v10m-4-4 4 4 4-4M4 17h12"/></svg>
+      <span class="button-text">Download video</span>
+    </button>
+    <div class="message" id="message" role="status" aria-live="polite"></div>
+    <p class="legal">Simpan hanya konten yang boleh kamu unduh.</p>
+  </div>
+
+  <aside class="stage" aria-hidden="true">
+    <div class="vf" id="vf" data-state="idle">
+      <i class="cn tl"></i><i class="cn tr"></i><i class="cn bl"></i><i class="cn br"></i>
+      <div class="screen" id="screen">
+          <canvas id="cv"></canvas><img id="videoThumbnail" class="preview-thumb" alt="" aria-hidden="true"><span class="scan"></span>
+        <span class="tag" id="hudTag">MP4 · Auto</span>
+        <svg class="glyph" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="rgba(8,10,40,.55)"/><g class="g-idle" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M28 34a6 6 0 0 0 8.5 0l4-4a6 6 0 0 0-8.5-8.5l-2 2M36 30a6 6 0 0 0-8.5 0l-4 4a6 6 0 0 0 8.5 8.5l2-2"/></g><path class="g-ready" d="M26 21v22l18-11z" fill="#fff"/><path class="g-done" d="M20 33l8 8 16-17" fill="none" stroke="#ffc247" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path class="g-error" d="M32 20v15m0 8v1" fill="none" stroke="#ff8a8a" stroke-width="4" stroke-linecap="round"/></svg>
+        <div class="cap"><b id="hudUser">Belum ada link</b><span id="hudMeta">Tempel link TikTok untuk mulai</span><div class="tl"><i></i></div></div>
+      </div>
+    </div>
+    <p class="tray" id="tray">Menunggu link</p>
+  </aside>
+</main>
+
+<footer class="foot"><span>© 2026 TikDrop</span><span>Bebas iklan</span></footer>
+<script src="app.js"></script>
+</body>
+</html>
